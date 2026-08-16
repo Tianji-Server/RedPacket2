@@ -1,6 +1,6 @@
 package sandtechnology.redpacket.session;
 
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import sandtechnology.redpacket.redpacket.RedPacket;
 import sandtechnology.redpacket.util.EcoAndPermissionHelper;
@@ -79,7 +79,7 @@ public class CreateSession {
                 //重试
                 parse(player, data);
             } else {
-                sendSimpleMsg(player, ChatColor.RED, "数字格式错误！你输入的是" + data);
+                sendSimpleMsg(player, NamedTextColor.RED, "数字格式错误！你输入的是" + data);
             }
         }
         setState(State.Init);

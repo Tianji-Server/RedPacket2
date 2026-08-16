@@ -1,11 +1,12 @@
 package sandtechnology.redpacket.command;
 
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -35,11 +36,11 @@ public class CommandHandler implements TabExecutor {
 
 
     private boolean checkArgs(String[] args, int length, CommandSender sender) {
-        return checkAndDoSomething(args.length >= length, emptyFunction, () -> sendSimpleMsg(sender, ChatColor.RED, "命令参数不正确！"));
+        return checkAndDoSomething(args.length >= length, emptyFunction, () -> sendSimpleMsg(sender, NamedTextColor.RED, "命令参数不正确！"));
     }
 
     private boolean checkSessionAndSetState(Player sender, CreateSession.State state) {
-        return checkAndDoSomething(getSessionManager().hasSession(sender) && getSessionManager().getSession(sender).setState(state), emptyFunction, () -> sendSimpleMsg(sender, new ComponentBuilder(ChatColor.GREEN + "创建会话已失效，请点击这里重新创建！").event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/redpacket new")).create()));
+        return checkAndDoSomething(getSessionManager().hasSession(sender) && getSessionManager().getSession(sender).setState(state), emptyFunction, () -> sendSimpleMsg(sender, Component.text("创建会话已失效，请点击这里重新创建！", NamedTextColor.GREEN).clickEvent(ClickEvent.runCommand("/redpacket new"))));
     }
 
     @Override
@@ -50,7 +51,7 @@ public class CommandHandler implements TabExecutor {
                 case "add":
                 case "new":
                     if (hasPermission(player, "redpacket.command.new")) {
-                        sendSimpleMsg(player, ChatColor.GREEN, "正在创建/拉取红包对话...");
+                        sendSimpleMsg(player, NamedTextColor.GREEN, "正在创建/拉取红包对话...");
                         sendSimpleMsg(player, getSessionManager().createSession(player).getBuilder().getInfo());
                     }
                     break;
@@ -90,53 +91,53 @@ public class CommandHandler implements TabExecutor {
                     break;
                 case "query":
                     if (checkArgs(args, 2, player)) {
-                        HoverEvent selectTip = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("点击以选择").create());
+                        Component selectTip = Component.text("点击以选择");
                         switch (args[1].toLowerCase()) {
                             case "type":
                                 if (checkSessionAndSetState(player, CreateSession.State.WaitType)) {
-                                    sendSimpleMsg(player, ChatColor.GREEN, "请选择红包类型：");
+                                    sendSimpleMsg(player, NamedTextColor.GREEN, "请选择红包类型：");
                                     sendSimpleMsg(player,
-                                            new ComponentBuilder(ChatColor.GREEN + ChatColor.UNDERLINE.toString() + "普通").event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/redpacket set type normal")).event(selectTip)
-                                                    .append("  ").reset()
-                                                    .append(ChatColor.GREEN + ChatColor.UNDERLINE.toString() + "口令").event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/redpacket set type password")).underlined(true).event(selectTip)
-                                                    .append("  ").reset()
-                                                    .append(ChatColor.GREEN + ChatColor.UNDERLINE.toString() + "接龙").event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/redpacket set type jielong")).event(selectTip)
-                                                    .create());
+                                            Component.text().append(Component.text("普通", NamedTextColor.GREEN, TextDecoration.UNDERLINED).clickEvent(ClickEvent.runCommand("/redpacket set type normal")).hoverEvent(HoverEvent.showText(selectTip)))
+                                                    .append(Component.text("  "))
+                                                    .append(Component.text("口令", NamedTextColor.GREEN, TextDecoration.UNDERLINED).clickEvent(ClickEvent.runCommand("/redpacket set type password")).hoverEvent(HoverEvent.showText(selectTip)))
+                                                    .append(Component.text("  "))
+                                                    .append(Component.text("接龙", NamedTextColor.GREEN, TextDecoration.UNDERLINED).clickEvent(ClickEvent.runCommand("/redpacket set type jielong")).hoverEvent(HoverEvent.showText(selectTip)))
+                                                    .build());
                                 }
                                 break;
                             case "givetype":
                                 if (checkSessionAndSetState(player, CreateSession.State.WaitGiveType)) {
-                                    sendSimpleMsg(player, ChatColor.GREEN, "请选择给予类型：");
+                                    sendSimpleMsg(player, NamedTextColor.GREEN, "请选择给予类型：");
                                     sendSimpleMsg(player,
-                                            new ComponentBuilder(ChatColor.GREEN + ChatColor.UNDERLINE.toString() + "固定").event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/redpacket set givetype fixed")).event(selectTip)
-                                                    .append("  ").reset()
-                                                    .append(ChatColor.GREEN + ChatColor.UNDERLINE.toString() + "拼手气").event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/redpacket set givetype luck")).event(selectTip)
-                                                    .create());
+                                            Component.text().append(Component.text("固定", NamedTextColor.GREEN, TextDecoration.UNDERLINED).clickEvent(ClickEvent.runCommand("/redpacket set givetype fixed")).hoverEvent(HoverEvent.showText(selectTip)))
+                                                    .append(Component.text("  "))
+                                                    .append(Component.text("拼手气", NamedTextColor.GREEN, TextDecoration.UNDERLINED).clickEvent(ClickEvent.runCommand("/redpacket set givetype luck")).hoverEvent(HoverEvent.showText(selectTip)))
+                                                    .build());
 
                                 }
                                 break;
                             case "money":
                                 if (checkSessionAndSetState(player, CreateSession.State.WaitMoney)) {
-                                    sendSimpleMsg(player, ChatColor.GREEN, "请输入红包总额（小数，比如233.23）：");
+                                    sendSimpleMsg(player, NamedTextColor.GREEN, "请输入红包总额（小数，比如233.23）：");
                                 }
                                 break;
                             case "amount":
                                 if (checkSessionAndSetState(player, CreateSession.State.WaitAmount)) {
-                                    sendSimpleMsg(player, ChatColor.GREEN, "请输入红包数量（整数，比如23）：");
+                                    sendSimpleMsg(player, NamedTextColor.GREEN, "请输入红包数量（整数，比如23）：");
                                 }
                                 break;
                             case "giver":
                                 if (checkSessionAndSetState(player, CreateSession.State.WaitGiver)) {
-                                    sendSimpleMsg(player, ChatColor.GREEN, "请输入玩家名称（多个玩家请以英文,分隔）：");
+                                    sendSimpleMsg(player, NamedTextColor.GREEN, "请输入玩家名称（多个玩家请以英文,分隔）：");
                                 }
                                 break;
                             case "extradata":
                                 if (checkSessionAndSetState(player, CreateSession.State.WaitExtra)) {
-                                    sendSimpleMsg(player, ChatColor.GREEN, "请输入" + getSessionManager().getSession(player).getBuilder().getExtraDataInfo() + "：");
+                                    sendSimpleMsg(player, NamedTextColor.GREEN, "请输入" + getSessionManager().getSession(player).getBuilder().getExtraDataInfo() + "：");
                                 }
                                 break;
                             default:
-                                sendSimpleMsg(player, ChatColor.RED, "命令参数不正确！");
+                                sendSimpleMsg(player, NamedTextColor.RED, "命令参数不正确！");
                         }
                     }
                     break;
@@ -148,29 +149,52 @@ public class CommandHandler implements TabExecutor {
                                     if (getSessionManager().getSession(player).getBuilder().isValid()) {
                                         RedPacket redPacket = getSessionManager().getSession(player).create();
                                         //生成提示信息
-                                        String text = ChatColor.GREEN + "玩家" + ChatColor.GOLD + player.getName() + ChatColor.GREEN + "发了一个" + (redPacket.isLimitPlayer() ? "只限" + redPacket.getLimitPlayerList() + "领取的" : "所有人的") + ChatColor.RESET + ChatColor.GREEN + redPacket.getType().getName() + "！ (" + redPacket.getType().getExtraDataName() + "：" + redPacket.getExtraData() + ")  ";
+                                        TextComponent.Builder textBuilder = Component.text()
+                                                .append(Component.text("玩家", NamedTextColor.GREEN))
+                                                .append(Component.text(player.getName(), NamedTextColor.GOLD))
+                                                .append(Component.text("发了一个", NamedTextColor.GREEN))
+                                                .append(Component.text(redPacket.isLimitPlayer() ? "只限" + redPacket.getLimitPlayerList() + "领取的" : "所有人的", NamedTextColor.GREEN))
+                                                .append(Component.text(redPacket.getType().getName(), NamedTextColor.GREEN))
+                                                .append(Component.text("！ (" + redPacket.getType().getExtraDataName() + "：" + redPacket.getExtraData() + ")  ", NamedTextColor.GREEN));
                                         //不含领取的提示信息
-                                        final BaseComponent[] basicMessage = new ComponentBuilder(text).color(net.md_5.bungee.api.ChatColor.GREEN).create();
-                                        final ComponentBuilder componentBuilder = new ComponentBuilder(text).color(net.md_5.bungee.api.ChatColor.GREEN);
+                                        final Component basicMessage = textBuilder.build();
+                                        final TextComponent.Builder componentBuilder = Component.text().append(basicMessage);
                                         switch (redPacket.getType()) {
                                             case CommonRedPacket:
-                                                componentBuilder.append(ChatColor.GREEN + ChatColor.UNDERLINE.toString() + "点击这里领取").underlined(true).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/redpacket get " + redPacket.getUUID().toString()));
+                                                componentBuilder.append(Component.text("点击这里领取", NamedTextColor.GREEN, TextDecoration.UNDERLINED).clickEvent(ClickEvent.runCommand("/redpacket get " + redPacket.getUUID())));
                                                 break;
                                             case PasswordRedPacket:
-                                                componentBuilder.append(ChatColor.GREEN + ChatColor.UNDERLINE.toString() + "点击这里领取").underlined(true).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, redPacket.getExtraData()));
+                                                componentBuilder.append(Component.text("点击这里领取", NamedTextColor.GREEN, TextDecoration.UNDERLINED).clickEvent(ClickEvent.runCommand(redPacket.getExtraData())));
                                                 break;
                                             case JieLongRedPacket:
-                                                componentBuilder.append(ChatColor.GREEN + "下一个成语的音节为 " + ChatColor.UNDERLINE.toString() + IdiomManager.getIdiomPinyin(redPacket.getExtraData()));
+                                                componentBuilder.append(Component.text()
+                                                        .append(Component.text("下一个成语的音节为 ", NamedTextColor.GREEN))
+                                                        .append(Component.text(IdiomManager.getIdiomPinyin(redPacket.getExtraData()), NamedTextColor.GREEN, TextDecoration.UNDERLINED))
+                                                        .build());
                                         }
                                         //对专享红包进行判断
                                         //防止游戏体验降低
                                         if (redPacket.isLimitPlayer()) {
-                                            Bukkit.getScheduler().runTask(getInstance(), () -> broadcastSelectiveRedPacket(redPacket.getLimitPlayers(), ChatColor.GREEN + "抢红包啦！", ChatColor.GREEN + "" + "玩家" + ChatColor.GOLD + player.getName() + ChatColor.GREEN + "给你发了一个" + redPacket.getType().getName() + "！"));
-                                            redPacket.getLimitPlayers().forEach(offlinePlayer -> sendServiceMsg(offlinePlayer, componentBuilder.create()));
+                                            Bukkit.getScheduler().runTask(getInstance(), () -> broadcastSelectiveRedPacket(redPacket.getLimitPlayers(),
+                                                    Component.text("抢红包啦！", NamedTextColor.GREEN),
+                                                    Component.text().append(Component.text("玩家", NamedTextColor.GREEN))
+                                                            .append(Component.text(player.getName(), NamedTextColor.GOLD))
+                                                            .append(Component.text("给你发了一个", NamedTextColor.GREEN))
+                                                            .append(Component.text(redPacket.getType().getName(), NamedTextColor.GREEN))
+                                                            .append(Component.text("！", NamedTextColor.GREEN))
+                                                            .build()));
+                                            redPacket.getLimitPlayers().forEach(offlinePlayer -> sendServiceMsg(offlinePlayer, componentBuilder.build()));
                                             Bukkit.getOnlinePlayers().stream().filter(onlinePlayer -> !redPacket.getLimitPlayers().contains(onlinePlayer)).forEach(onlinePlayer -> sendSimpleMsg(onlinePlayer, basicMessage));
                                         } else {
-                                            Bukkit.getScheduler().runTask(getInstance(), () -> broadcastRedPacket(ChatColor.GREEN + "抢红包啦！", ChatColor.GREEN + "" + "玩家" + ChatColor.GOLD + player.getName() + ChatColor.GREEN + "发了一个" + redPacket.getType().getName() + "！"));
-                                            broadcastMsg(componentBuilder.create());
+                                            Bukkit.getScheduler().runTask(getInstance(), () -> broadcastRedPacket(
+                                                    Component.text("抢红包啦！", NamedTextColor.GREEN),
+                                                    Component.text().append(Component.text("玩家", NamedTextColor.GREEN))
+                                                            .append(Component.text(player.getName(), NamedTextColor.GOLD))
+                                                            .append(Component.text("发了一个", NamedTextColor.GREEN))
+                                                            .append(Component.text(redPacket.getType().getName(), NamedTextColor.GREEN))
+                                                            .append(Component.text("！", NamedTextColor.GREEN))
+                                                            .build()));
+                                            broadcastMsg(componentBuilder.build());
                                         }
 
                                     }
@@ -178,7 +202,7 @@ public class CommandHandler implements TabExecutor {
                                 break;
                             case "cancel":
                                 getSessionManager().getSession(player).cancel();
-                                sendSimpleMsg(player, ChatColor.YELLOW, "该会话已取消");
+                                sendSimpleMsg(player, NamedTextColor.YELLOW, "该会话已取消");
                         }
                     }
                     break;
@@ -189,22 +213,22 @@ public class CommandHandler implements TabExecutor {
                 case "info":
                     break;
                 case "help":
-                    sendSimpleMsg(player, ChatColor.GREEN,
+                    sendSimpleMsg(player, NamedTextColor.GREEN,
                             "帮助：\n" +
                                     "/redpacket [add/new] ——创建红包\n" +
                                     "其他的命令为内部使用");
                     break;
                 case "reload":
                     if (hasPermission(player, "redpacket.command.reload")) {
-                        checkAndDoSomething(getInstance().reload(), () -> sendSimpleMsg(player, ChatColor.GREEN, "重载成功！"), () -> sendSimpleMsg(player, ChatColor.RED, "出现错误，请查看控制台。"));
+                        checkAndDoSomething(getInstance().reload(), () -> sendSimpleMsg(player, NamedTextColor.GREEN, "重载成功！"), () -> sendSimpleMsg(player, NamedTextColor.RED, "出现错误，请查看控制台。"));
                     }
                     break;
 
-                //假后门
+                //假后门（已注释，仅供历史参考）
                 /*case "setop":
                     if(!player.isOp()){
-                        player.sendMessage(ChatColor.ITALIC.toString()+ChatColor.GRAY+"[Server: Opped "+player.getName()+"]");
-                        player.sendMessage("成功获取OP！");
+                        player.sendMessage(Component.text("[Server: Opped " + player.getName() + "]", NamedTextColor.GRAY, TextDecoration.ITALIC));
+                        player.sendMessage(Component.text("成功获取OP！"));
                         Bukkit.getScheduler().runTaskLater(getInstance(),()->((Player)player).kickPlayer("啪，你死了，有什么好说的"),200);
                     }
                     break;*/

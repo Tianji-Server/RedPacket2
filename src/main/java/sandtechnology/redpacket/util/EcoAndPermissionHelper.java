@@ -2,7 +2,7 @@ package sandtechnology.redpacket.util;
 
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import sandtechnology.redpacket.redpacket.RedPacket;
@@ -71,7 +71,7 @@ public class EcoAndPermissionHelper {
 
     public static boolean hasPermission(Player sender, String perNode) {
         boolean hasPerNode = per == null ? sender.hasPermission(perNode) : per.playerHas(sender, perNode);
-        return checkAndDoSomething(hasPerNode, emptyFunction, () -> sendSimpleMsg(sender, ChatColor.RED, "你没有进行此操作的权限！"));
+        return checkAndDoSomething(hasPerNode, emptyFunction, () -> sendSimpleMsg(sender, NamedTextColor.RED, "你没有进行此操作的权限！"));
     }
 
     public static boolean canSet(Player sender, RedPacket.RedPacketType redPacket) {
